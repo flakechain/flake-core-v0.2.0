@@ -1,3 +1,4 @@
+// Copyright (c)      2018  FlakeChain Project
 // Copyright (c) 2014-2018, The Monero Project
 //
 // All rights reserved.
@@ -34,6 +35,7 @@
 #include <boost/interprocess/detail/atomic.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/limits.hpp>
+#include <boost/python.hpp>
 #include "include_base_utils.h"
 #include "misc_language.h"
 #include "syncobj.h"
@@ -76,6 +78,10 @@ using namespace epee;
 
 #include "miner.h"
 
+#ifdef SMART_CONTRACTS_FEATURE
+using namespace boost::python;
+#endif
+
 
 extern "C" void slow_hash_allocate_state();
 extern "C" void slow_hash_free_state();
@@ -95,7 +101,8 @@ namespace cryptonote
   }
 
 
-  miner::miner(i_miner_handler* phandler):m_stop(1),
+  miner::miner(i_miner_handler* phandler):
+    m_stop(1),
     m_template(boost::value_initialized<block>()),
     m_template_no(0),
     m_diffic(0),
@@ -116,7 +123,16 @@ namespace cryptonote
     m_mining_target(BACKGROUND_MINING_DEFAULT_MINING_TARGET_PERCENTAGE),
     m_miner_extra_sleep(BACKGROUND_MINING_DEFAULT_MINER_EXTRA_SLEEP_MILLIS)
   {
-
+    #ifdef SMART_CONTRACTS_FEATURE
+      Py_Initialize();
+      object main_module((
+            handle<>(borrowed(PyImport_AddModule("__main__")))));
+      object main_namespace = main_module.attr("__dict__");
+      handle<> ignored(( PyRun_String( "print \"Hello, World\"",
+                                       Py_file_input,
+                                       main_namespace.ptr(),
+                                       main_namespace.ptr() ) ));
+    #endif
   }
   //-----------------------------------------------------------------------------------------------------
   miner::~miner()

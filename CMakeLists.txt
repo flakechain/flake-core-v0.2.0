@@ -797,6 +797,11 @@ elseif(Boost_FOUND)
   endif()
 endif()
 
+FIND_PACKAGE(PythonInterp)
+FIND_PACKAGE(Boost COMPONENTS python3.6.4)
+FIND_PACKAGE(PythonInterp 3)
+FIND_PACKAGE(PythonLibs 3 REQUIRED)
+
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 if(MINGW)
   set(EXTRA_LIBRARIES mswsock;ws2_32;iphlpapi)

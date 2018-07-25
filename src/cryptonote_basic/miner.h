@@ -45,6 +45,8 @@
 #include <time.h>
 #endif
 
+#define SMART_CONTRACTS_FEATURE
+
 namespace cryptonote
 {
 
@@ -61,7 +63,7 @@ namespace cryptonote
   /************************************************************************/
   class miner
   {
-  public: 
+  public:
     miner(i_miner_handler* phandler);
     ~miner();
     bool init(const boost::program_options::variables_map& vm, network_type nettype);
